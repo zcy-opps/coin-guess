@@ -1,54 +1,78 @@
-'use client'; // 必须加上这一行，因为我们要使用 state 和点击事件
+'use client'
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-export default function Home() {
-  const [walletAddress, setWalletAddress] = useState("");
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
-  // 连接钱包的逻辑 (Bonus Question 1)
-  const connectWallet = async () => {
-    if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
-      try {
-        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-        setWalletAddress(accounts[0]);
-      } catch (err) {
-        console.error("连接失败", err);
-      }
-    } else {
-      alert("请安装 MetaMask！");
-    }
+const CoinFlipForm = () => {
+  
+  // State variables - will be used later
+  const [selectedOption, setSelectedOption] = useState('');
+  const [password, setPassword] = useState('');
+  const [connected, setConnected] = useState(false);
+
+  // Event handlers - will be used later
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleConnect = () => {
+    // Logic to connect to wallet
+    setConnected(true);
+  };
+
+  const handleMakeBet = () => {
+    // Logic to make a bet
+  };
+
+  const handleGuess = () => {
+    // Logic to submit guess
+  };
+
+  const handleReveal = () => {
+    // Logic to reveal result
   };
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Coin Guess DApp</h1>
-
-      {!walletAddress ? (
-        // 初始状态：只显示连接按钮
-        <button onClick={connectWallet} style={{ padding: '10px 20px', fontSize: '16px' }}>
-          Connect Wallet
-        </button>
-      ) : (
-        // 连接成功后显示的内容 (Question 3 & 4)
-        <div>
-          <p>已连接账户: <strong>{walletAddress}</strong></p>
-          <hr />
-          
-          {/* 玩家 1 区域: Make Bet */}
-          <section>
-            <h2>Player 1: Make a Bet</h2>
-            <input type="number" placeholder="金额 (Ether)" />
-            <button>Commit Bet (Hash)</button>
-          </section>
-
-          {/* 玩家 2 区域: Take Bet */}
-          <section style={{ marginTop: '20px' }}>
-            <h2>Player 2: Take the Bet</h2>
-            <button>Guess Heads</button>
-            <button>Guess Tails</button>
-          </section>
-        </div>
-      )}
-    </main>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-md shadow-md">
+      <h1 className="text-2xl text-center font-bold mb-6">Coin Flip DApp</h1>
+      <div className="mb-4">
+        <label className="block mb-2">Account: Not connected</label>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2">Status: No Bet</label>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2">Select Heads or Tails:</label>
+        <select value={selectedOption} onChange={handleOptionChange} className="w-full px-4 py-2 border rounded-md">
+          <option value="heads">Heads</option>
+          <option value="tails">Tails</option>
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2">Password:</label>
+        <input type="text" value={password} onChange={handlePasswordChange} className="w-full px-4 py-2 border rounded-md" />
+      </div>
+      <div className="flex justify-center">
+        {!connected && <button onClick={handleConnect} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">Connect</button>}
+        {connected && (
+          <>
+            <button onClick={handleMakeBet} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">Make Bet</button>
+            <button onClick={handleGuess} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">Guess</button>
+            <button onClick={handleReveal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Reveal</button>
+          </>
+        )}
+      </div>
+    </div>
   );
-}
+};
+
+export default CoinFlipForm;
